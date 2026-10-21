@@ -32,7 +32,7 @@
     --border: var(--gray-800);
     --text: var(--gray-50);
     --muted: var(--gray-300);
-    --accent: var(--brand-yellow);
+    --accent: var(--brand-orange);
     --accent-text: var(--brand-ink);
   }
 }

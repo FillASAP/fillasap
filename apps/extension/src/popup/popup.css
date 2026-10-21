@@ -2,6 +2,7 @@
 :root {
   color-scheme: light dark;
   --brand-yellow: #ffd84d;
+  --brand-orange: #ff9233;
   --brand-orange-deep: #b35300;
   --brand-ink: #1c1d21;
   --gray-0: #ffffff;
@@ -17,7 +18,7 @@
   :root {
     --surface: var(--gray-925);
     --text: var(--gray-50);
-    --link: var(--brand-yellow);
+    --link: var(--brand-orange);
   }
 }
 

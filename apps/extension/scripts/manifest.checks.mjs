@@ -27,3 +27,11 @@ test("the production build requests no permission beyond storage", () => {
   assert.equal(manifest.host_permissions, undefined);
   assert.equal(manifest.externally_connectable, undefined);
 });
+
+test("the production build ships the logo as its icons", () => {
+  const manifest = productionManifest();
+  assert.deepEqual(Object.keys(manifest.icons ?? {}), ["16", "32", "48", "128"]);
+  for (const icon of Object.values(manifest.icons)) {
+    assert.ok(existsSync(new URL(`../.output/chrome-mv3/${icon}`, import.meta.url)), icon);
+  }
+});
