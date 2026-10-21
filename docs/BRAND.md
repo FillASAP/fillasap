@@ -6,17 +6,18 @@ The logo, the palette, and how the website and the extension popup use them.
 
 The logo is an italic **F** with a solid extrusion. `scripts/logo.mjs` holds its geometry and colors, and `vp run logo` regenerates every file drawn from it; edit the scripts, never the outputs:
 
-| File                                    | Script                        | Background                      |
-| --------------------------------------- | ----------------------------- | ------------------------------- |
-| `apps/website/public/favicon.svg`       | `scripts/favicon.mjs`         | Rounded tile, follows theme     |
-| `apps/extension/public/icon/<size>.png` | `scripts/extension-icons.mjs` | Transparent; 16, 32, 48, 128 px |
+| File                                    | Script                 | Background                       |
+| --------------------------------------- | ---------------------- | -------------------------------- |
+| `apps/website/public/favicon.svg`       | `scripts/favicon.mjs`  | Transparent                      |
+| `apps/extension/public/icon/<size>.png` | `scripts/logo-png.mjs` | Transparent; 16, 32, 48, 128 px  |
+| `docs/logo.png`                         | `scripts/logo-png.mjs` | Transparent; 512 px, for avatars |
 
-The extension icons are PNG because Chrome rejects SVG manifest icons, and they have no tile because the browser draws its own toolbar and menu backgrounds. The script rasterizes the polygons itself (8 × 8 samples per pixel), so it needs no browser or image library. WXT finds `public/icon/<size>.png` and lists them in the manifest; `vp run test:extension-manifest` fails if a production build ships without them.
+No file has a tile: yellow and orange read on both light and dark backgrounds, so one file serves both themes. The extension icons are PNG because Chrome rejects SVG manifest icons. `docs/logo.png` is the avatar for the GitHub organization and X; it has a wider margin so a circular crop keeps the letter's corners. The script rasterizes the polygons itself (8 × 8 samples per pixel), so it needs no browser or image library. WXT finds `public/icon/<size>.png` and lists them in the manifest; `vp run test:extension-manifest` fails if a production build ships without them.
 
 - **Letter.** An upright F (top bar, middle bar, stem) slanted 20° to the right. The stem ends in a point toward the bottom left, which reads as speed.
-- **Depth.** The letter is extruded 2.2 units (of a 32-unit tile) toward the bottom right: one shifted copy plus a quad per edge. No outline.
-- **Tile (favicon only).** A 32 × 32 square with a 7-unit corner radius. The letter and its depth are centered in it.
-- **Colors.** Face yellow, depth orange. The tile is paper in light mode and graphite in dark mode: an SVG `<style>` with a `prefers-color-scheme` query switches it, so one file serves both browser themes.
+- **Depth.** The letter is extruded 2.2 units (of a 32-unit box) toward the bottom right: one shifted copy plus a quad per edge. No outline.
+- **Box.** The letter and its depth are centered in a 32 × 32 box (the favicon's view box).
+- **Colors.** Face yellow, depth orange, on a transparent background.
 
 ## Palette
 
@@ -26,8 +27,7 @@ The extension icons are PNG because Chrome rejects SVG manifest icons, and they 
 | `--brand-orange`      | `#ff9233` | Logo depth; the accent in both themes                   |
 | `--brand-orange-deep` | `#b35300` | Links in light mode, where orange is too light for text |
 | `--brand-ink`         | `#1c1d21` | Text in light mode, and text on any accent fill         |
-| `--brand-paper`       | `#f6f7f9` | Light page background; the light logo tile              |
-| `--brand-graphite`    | `#404041` | The dark logo tile (only in the favicon)                |
+| `--brand-paper`       | `#f6f7f9` | Light page background                                   |
 
 Grays (`--gray-0` … `--gray-950`) are the neutral surfaces, borders, and secondary text.
 
