@@ -1,11 +1,11 @@
-// Writes apps/extension/public/icon/<size>.png: the logo on a transparent background (docs/BRAND.md).
+// Writes the logo as transparent PNGs: the extension icons and docs/logo.png (docs/BRAND.md).
 import { mkdirSync, writeFileSync } from "node:fs";
 import { crc32, deflateSync } from "node:zlib";
 import { extrusion, face, palette } from "./logo.mjs";
 
 const SIZES = [16, 32, 48, 128];
+const LOGO_SIZE = 512;
 const SAMPLES = 8;
-const PADDING = 0.04;
 
 const rgb = (hex) => [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
 const layers = [
@@ -34,8 +34,8 @@ const span = Math.max(
   Math.max(...points.map(([, y]) => y)) - top,
 );
 
-function pixel(size, px, py) {
-  const scale = span / (size * (1 - 2 * PADDING));
+function pixel(size, padding, px, py) {
+  const scale = span / (size * (1 - 2 * padding));
   const sum = [0, 0, 0];
   let covered = 0;
   for (let i = 0; i < SAMPLES * SAMPLES; i++) {
@@ -61,11 +61,11 @@ function chunk(type, data) {
   return Buffer.concat([length, body, crc]);
 }
 
-function png(size) {
+function png(size, padding) {
   const rows = [];
   for (let y = 0; y < size; y++) {
     const row = [0];
-    for (let x = 0; x < size; x++) row.push(...pixel(size, x, y));
+    for (let x = 0; x < size; x++) row.push(...pixel(size, padding, x, y));
     rows.push(Buffer.from(row));
   }
   const header = Buffer.alloc(13);
@@ -82,4 +82,6 @@ function png(size) {
 
 const dir = new URL("../apps/extension/public/icon/", import.meta.url);
 mkdirSync(dir, { recursive: true });
-for (const size of SIZES) writeFileSync(new URL(`${size}.png`, dir), png(size));
+for (const size of SIZES) writeFileSync(new URL(`${size}.png`, dir), png(size, 0.04));
+// Wider margin so avatars that crop to a circle keep the letter's corners.
+writeFileSync(new URL("../docs/logo.png", import.meta.url), png(LOGO_SIZE, 0.12));

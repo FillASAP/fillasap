@@ -1,4 +1,4 @@
-// Writes apps/website/public/favicon.svg: the logo on a tile that follows the color scheme (docs/BRAND.md).
+// Writes apps/website/public/favicon.svg: the logo on a transparent background (docs/BRAND.md).
 import { writeFileSync } from "node:fs";
 import { extrusion, face, palette } from "./logo.mjs";
 
@@ -14,13 +14,9 @@ const path = (points) => {
   return `M${ordered.map(([x, y]) => `${round(x)} ${round(y)}`).join("L")}Z`;
 };
 
-const style =
-  `:root{--face:${palette.yellow};--depth:${palette.orange};--tile:${palette.paper}}` +
-  `@media (prefers-color-scheme:dark){:root{--tile:${palette.graphite}}}` +
-  "rect{fill:var(--tile)}.depth{fill:var(--depth)}.face{fill:var(--face)}";
 const svg =
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><style>${style}</style>` +
-  `<rect width="32" height="32" rx="7"/><path class="depth" d="${extrusion.map(path).join("")}"/>` +
-  `<path class="face" d="${path(face)}"/></svg>\n`;
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">` +
+  `<path fill="${palette.orange}" d="${extrusion.map(path).join("")}"/>` +
+  `<path fill="${palette.yellow}" d="${path(face)}"/></svg>\n`;
 
 writeFileSync(new URL("../apps/website/public/favicon.svg", import.meta.url), svg);

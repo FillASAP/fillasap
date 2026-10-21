@@ -2,8 +2,6 @@
 export const palette = {
   yellow: "#ffd84d",
   orange: "#ff9233",
-  paper: "#f6f7f9",
-  graphite: "#404041",
 };
 
 const slant = Math.tan((20 * Math.PI) / 180);
