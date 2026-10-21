@@ -13,6 +13,7 @@ Durable decisions live in `docs/`:
 - [PRODUCT_BRIEF.md](docs/PRODUCT_BRIEF.md): concepts and product rules.
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md): packages, layers, the bridge protocol, the security model, and the toolchain.
 - [MILESTONES.md](docs/MILESTONES.md): delivery and acceptance.
+- [BRAND.md](docs/BRAND.md): logo, palette, contrast, and CSS tokens.
 
 Update the relevant doc when a change alters what it describes.
 
@@ -70,6 +71,7 @@ Test commands and `verify` run in Docker, so start Docker Desktop first. If Dock
 - In app source and tests, import from `src` through the `@/` alias, never with `../` paths (lint rejects them). `./` imports are fine.
 - Validate every message and stored value with the `@fillasap/domain` or `@fillasap/bridge` schemas at the boundary where it enters; the content script never touches storage.
 - Write code, comments, docs, UI copy, and diagnostics in English.
+- In CSS, write hex colors only in the palette tokens at the top of each stylesheet; rules use semantic tokens ([BRAND.md](docs/BRAND.md#tokens)).
 - Keep comments sparse: one line stating a reason or constraint, never a restatement of the code.
 - Add tests together with new domain logic, protocol messages, handlers, and components.
 - Never push to `master` without explicit authorization: a push to `master` deploys the website.

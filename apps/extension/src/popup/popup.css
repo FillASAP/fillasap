@@ -1,15 +1,23 @@
+/* Hex values live only in this palette; rules use semantic tokens (docs/BRAND.md). */
 :root {
   color-scheme: light dark;
-  --surface: #ffffff;
-  --text: #1c1d21;
-  --accent: #2f5bea;
+  --brand-yellow: #ffd84d;
+  --brand-orange-deep: #b35300;
+  --brand-ink: #1c1d21;
+  --gray-0: #ffffff;
+  --gray-50: #e9eaee;
+  --gray-925: #17181c;
+
+  --surface: var(--gray-0);
+  --text: var(--brand-ink);
+  --link: var(--brand-orange-deep);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface: #17181c;
-    --text: #e9eaee;
-    --accent: #8aa6ff;
+    --surface: var(--gray-925);
+    --text: var(--gray-50);
+    --link: var(--brand-yellow);
   }
 }
 
@@ -33,5 +41,5 @@ body {
 }
 
 .popup a {
-  color: var(--accent);
+  color: var(--link);
 }
