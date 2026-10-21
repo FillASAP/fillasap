@@ -1,0 +1,37 @@
+:root {
+  color-scheme: light dark;
+  --surface: #ffffff;
+  --text: #1c1d21;
+  --accent: #2f5bea;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #17181c;
+    --text: #e9eaee;
+    --accent: #8aa6ff;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font:
+    14px/1.4 system-ui,
+    sans-serif;
+}
+
+.popup {
+  min-width: 16rem;
+  padding: 1rem;
+}
+
+.popup h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.popup a {
+  color: var(--accent);
+}
