@@ -1,0 +1,85 @@
+// Writes apps/extension/public/icon/<size>.png: the logo on a transparent background (docs/BRAND.md).
+import { mkdirSync, writeFileSync } from "node:fs";
+import { crc32, deflateSync } from "node:zlib";
+import { extrusion, face, palette } from "./logo.mjs";
+
+const SIZES = [16, 32, 48, 128];
+const SAMPLES = 8;
+const PADDING = 0.04;
+
+const rgb = (hex) => [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
+const layers = [
+  { color: rgb(palette.yellow), polygons: [face] },
+  { color: rgb(palette.orange), polygons: extrusion },
+];
+
+const inside = (polygon, x, y) => {
+  let hit = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const [xi, yi] = polygon[i];
+    const [xj, yj] = polygon[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit;
+  }
+  return hit;
+};
+// The topmost layer wins: the face covers the extrusion.
+const colorAt = (x, y) =>
+  layers.find((layer) => layer.polygons.some((polygon) => inside(polygon, x, y)))?.color;
+
+const points = [face, ...extrusion].flat();
+const left = Math.min(...points.map(([x]) => x));
+const top = Math.min(...points.map(([, y]) => y));
+const span = Math.max(
+  Math.max(...points.map(([x]) => x)) - left,
+  Math.max(...points.map(([, y]) => y)) - top,
+);
+
+function pixel(size, px, py) {
+  const scale = span / (size * (1 - 2 * PADDING));
+  const sum = [0, 0, 0];
+  let covered = 0;
+  for (let i = 0; i < SAMPLES * SAMPLES; i++) {
+    const sx = px + ((i % SAMPLES) + 0.5) / SAMPLES - size / 2;
+    const sy = py + (Math.floor(i / SAMPLES) + 0.5) / SAMPLES - size / 2;
+    const color = colorAt(left + span / 2 + sx * scale, top + span / 2 + sy * scale);
+    if (!color) continue;
+    covered++;
+    color.forEach((channel, c) => (sum[c] += channel));
+  }
+  const alpha = covered / (SAMPLES * SAMPLES);
+  return covered
+    ? [...sum.map((s) => Math.round(s / covered)), Math.round(alpha * 255)]
+    : [0, 0, 0, 0];
+}
+
+function chunk(type, data) {
+  const body = Buffer.concat([Buffer.from(type, "ascii"), data]);
+  const length = Buffer.alloc(4);
+  length.writeUInt32BE(data.length);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(body));
+  return Buffer.concat([length, body, crc]);
+}
+
+function png(size) {
+  const rows = [];
+  for (let y = 0; y < size; y++) {
+    const row = [0];
+    for (let x = 0; x < size; x++) row.push(...pixel(size, x, y));
+    rows.push(Buffer.from(row));
+  }
+  const header = Buffer.alloc(13);
+  header.writeUInt32BE(size, 0);
+  header.writeUInt32BE(size, 4);
+  header.set([8, 6, 0, 0, 0], 8);
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    chunk("IHDR", header),
+    chunk("IDAT", deflateSync(Buffer.concat(rows))),
+    chunk("IEND", Buffer.alloc(0)),
+  ]);
+}
+
+const dir = new URL("../apps/extension/public/icon/", import.meta.url);
+mkdirSync(dir, { recursive: true });
+for (const size of SIZES) writeFileSync(new URL(`${size}.png`, dir), png(size));
