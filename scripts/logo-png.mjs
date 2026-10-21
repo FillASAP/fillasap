@@ -27,12 +27,11 @@ const colorAt = (x, y) =>
   layers.find((layer) => layer.polygons.some((polygon) => inside(polygon, x, y)))?.color;
 
 const points = [face, ...extrusion].flat();
-const left = Math.min(...points.map(([x]) => x));
-const top = Math.min(...points.map(([, y]) => y));
-const span = Math.max(
-  Math.max(...points.map(([x]) => x)) - left,
-  Math.max(...points.map(([, y]) => y)) - top,
-);
+const range = (values) => [Math.min(...values), Math.max(...values)];
+const [xs, ys] = [range(points.map(([x]) => x)), range(points.map(([, y]) => y))];
+// Center each axis on its own midpoint; the longer axis sets the scale.
+const [midX, midY] = [(xs[0] + xs[1]) / 2, (ys[0] + ys[1]) / 2];
+const span = Math.max(xs[1] - xs[0], ys[1] - ys[0]);
 
 function pixel(size, padding, px, py) {
   const scale = span / (size * (1 - 2 * padding));
@@ -41,7 +40,7 @@ function pixel(size, padding, px, py) {
   for (let i = 0; i < SAMPLES * SAMPLES; i++) {
     const sx = px + ((i % SAMPLES) + 0.5) / SAMPLES - size / 2;
     const sy = py + (Math.floor(i / SAMPLES) + 0.5) / SAMPLES - size / 2;
-    const color = colorAt(left + span / 2 + sx * scale, top + span / 2 + sy * scale);
+    const color = colorAt(midX + sx * scale, midY + sy * scale);
     if (!color) continue;
     covered++;
     color.forEach((channel, c) => (sum[c] += channel));
