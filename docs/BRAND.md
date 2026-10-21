@@ -1,0 +1,47 @@
+# Brand
+
+The logo, the palette, and how the website and the extension popup use them.
+
+## Logo
+
+`apps/website/public/favicon.svg` is an italic **F** with a solid extrusion, on a rounded tile. `scripts/favicon.mjs` generates it; edit the script, not the SVG, then run `vp run favicon`.
+
+- **Letter.** An upright F (top bar, middle bar, stem) slanted 20° to the right. The stem ends in a point toward the bottom left, which reads as speed.
+- **Depth.** The letter is extruded 2.2 units (of a 32-unit tile) toward the bottom right: one shifted copy plus a quad per edge. No outline.
+- **Tile.** A 32 × 32 square with a 7-unit corner radius. The letter and its depth are centered in it.
+- **Colors.** Face yellow, depth orange. The tile is paper in light mode and graphite in dark mode: an SVG `<style>` with a `prefers-color-scheme` query switches it, so one file serves both browser themes.
+
+## Palette
+
+| Token                 | Hex       | Role                                                    |
+| --------------------- | --------- | ------------------------------------------------------- |
+| `--brand-yellow`      | `#ffd84d` | Logo face; the accent in dark mode                      |
+| `--brand-orange`      | `#ff9233` | Logo depth; accent fills (buttons) in light mode        |
+| `--brand-orange-deep` | `#b35300` | Links in light mode, where orange is too light for text |
+| `--brand-ink`         | `#1c1d21` | Text in light mode, and text on any accent fill         |
+| `--brand-paper`       | `#f6f7f9` | Light page background; the light logo tile              |
+| `--brand-graphite`    | `#404041` | The dark logo tile (only in the favicon)                |
+
+Grays (`--gray-0` … `--gray-950`) are the neutral surfaces, borders, and secondary text.
+
+### Where the accent goes
+
+Yellow and orange are for calls to action, highlights, and accents: a primary button, a link, a marker that needs the eye. Structure stays neutral: surfaces, cards, borders, and dividers use the grays, and buttons have no border.
+
+Dark mode leans on yellow and light mode on orange, because each keeps contrast on its background (WCAG 2.2 ratios):
+
+| Use                  | Light mode                   | Dark mode                |
+| -------------------- | ---------------------------- | ------------------------ |
+| Button fill and text | orange with ink: 7.55:1      | yellow with ink: 12.17:1 |
+| Popup link           | deep orange on white: 5.06:1 | yellow on popup: 12.82:1 |
+
+Plain orange on white is 2.23:1, below 4.5:1 for text, so light-mode links use deep orange. White text on orange fails the same way, so accent fills always carry ink text.
+
+## Tokens
+
+Each stylesheet (`apps/website/src/app/app.css`, `apps/extension/src/popup/popup.css`) opens with a `:root` block in two layers:
+
+1. **Palette:** `--brand-*` and `--gray-*`. The only place a hex color is written.
+2. **Semantic:** `--surface`, `--card`, `--border`, `--text`, `--muted`, `--accent`, `--accent-text`, `--link`. Each points to a palette token, and the `prefers-color-scheme: dark` block repoints them.
+
+Rules use semantic tokens only: never write a hex color in a property, and never reference a palette token outside the `:root` blocks. A new color is a new palette token plus a semantic token for its role. The website and the popup are separate apps that share no code, so each file repeats the palette tokens it uses; keep their values identical to this table.

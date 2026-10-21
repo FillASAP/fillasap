@@ -5,6 +5,7 @@ Record and replay browser flows: log in, fill long forms, and reproduce bugs in 
 - [Product brief](docs/PRODUCT_BRIEF.md): concepts (workspaces, flows, fragments, actions, variables and datasets, suites).
 - [Architecture](docs/ARCHITECTURE.md): packages, layers, the website ↔ extension protocol, and the security model.
 - [Milestones](docs/MILESTONES.md): what is done and what comes next.
+- [Brand](docs/BRAND.md): logo, colors, and CSS tokens.
 - [AGENTS.md](AGENTS.md): rules for contributors, human or AI.
 
 ## Install the extension

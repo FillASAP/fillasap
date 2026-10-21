@@ -9,6 +9,7 @@
     "dev:website": "vp run website#dev",
     "dev:extension": "vp run extension#dev",
     "clean": "node scripts/clean.mjs && vp run extension#wxt:prepare",
+    "favicon": "node scripts/favicon.mjs",
     "test:unit": "node scripts/test-container.mjs test:unit:local",
     "test:unit:local": "vp test --project=website --project=extension --project=@fillasap/domain --project=@fillasap/bridge",
     "test:components": "node scripts/test-container.mjs test:components:local",
