@@ -87,6 +87,17 @@ The extension holds the user's data; the website only displays it.
 - **Script injection on a production origin** (fillasap.ai, or a page served again on fillasap.dev or fillasap.io) would let an attacker read the user's data through the bridge, so the website ships a strict CSP (`default-src 'self'`, no inline scripts or styles; `apps/website/build/content-security-policy.ts`). GitHub Pages sends no headers, so the CSP is a `<meta>` tag added to production builds only. Third-party scripts are not allowed on the website.
 - Adding a write request widens this model; the `adding-a-bridge-message` skill requires documenting it here first.
 
+### Planned for M1 (not built)
+
+The side panel ([PRODUCT_BRIEF.md](PRODUCT_BRIEF.md#surfaces)) records and replays in the user's own applications, which needs more than `storage`. The plan, to confirm in an M1 spike:
+
+- **`sidePanel`**, for the panel itself.
+- **Per-origin access, granted at run time.** Each workspace environment's origin is an optional host permission. The panel requests it (`permissions.request`) the first time the user records or replays there; the user can revoke it in Chrome. Content scripts for granted origins are registered with `scripting.registerContentScripts`, so the extension needs `scripting` too.
+- **`activeTab`** for a tab outside every workspace: it gives access to that page only, after a user gesture, and ends on navigation. It is enough to try the recorder, not to record a flow that crosses pages.
+- **No install-time host permissions**, and never `<all_urls>`.
+- Recording scripts in the user's applications never answer the bridge; they only report events to the background.
+- `apps/extension/scripts/manifest.checks.mjs` changes in the same commit, so the production manifest allows exactly these.
+
 ## Toolchain
 
 | Concern                  | Tool                                                                       |

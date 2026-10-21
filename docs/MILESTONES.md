@@ -20,6 +20,7 @@ Manual, once per release of the extension:
 
 ## Next
 
-- M1: record actions in the browser and save them to a workspace.
-- M2: replay a flow with a dataset.
+- M1: the side panel ([Surfaces](PRODUCT_BRIEF.md#surfaces)). The toolbar icon opens it; it records in the current tab and saves a flow or fragment to the workspace that matches the tab, and its library lists the workspace's items with quick edits. Per-origin permissions as planned in [ARCHITECTURE.md](ARCHITECTURE.md#planned-for-m1-not-built). The popup goes away.
+- M2: replay a flow from the side panel, with a dataset row or typed values.
+- M3: edit on the website: bridge write messages and change notifications, datasets as tables, import and export.
 - Publish the extension to the Chrome Web Store, and point the install banner at the listing.
