@@ -1,4 +1,4 @@
-// Writes the logo as transparent PNGs: the extension icons and docs/logo.png (docs/BRAND.md).
+// Writes the logo as transparent rasters: extension icons, website ICO and touch icon, docs/logo.png (docs/BRAND.md).
 import { mkdirSync, writeFileSync } from "node:fs";
 import { crc32, deflateSync } from "node:zlib";
 import { extrusion, face, palette } from "./logo.mjs";
@@ -78,6 +78,30 @@ function png(size, padding) {
     chunk("IEND", Buffer.alloc(0)),
   ]);
 }
+
+// An ICO whose entries are PNGs, which every current browser reads.
+function ico(sizes) {
+  const images = sizes.map((size) => png(size, 0.04));
+  const header = Buffer.alloc(6 + 16 * sizes.length);
+  header.writeUInt16LE(1, 2);
+  header.writeUInt16LE(sizes.length, 4);
+  let offset = header.length;
+  sizes.forEach((size, i) => {
+    const entry = 6 + 16 * i;
+    header.set([size, size], entry);
+    header.writeUInt16LE(1, entry + 4);
+    header.writeUInt16LE(32, entry + 6);
+    header.writeUInt32LE(images[i].length, entry + 8);
+    header.writeUInt32LE(offset, entry + 12);
+    offset += images[i].length;
+  });
+  return Buffer.concat([header, ...images]);
+}
+
+// iOS browsers ignore SVG favicons and request these two instead.
+const site = new URL("../apps/website/public/", import.meta.url);
+writeFileSync(new URL("favicon.ico", site), ico([16, 32, 48]));
+writeFileSync(new URL("apple-touch-icon.png", site), png(180, 0.12));
 
 const dir = new URL("../apps/extension/public/icon/", import.meta.url);
 mkdirSync(dir, { recursive: true });
