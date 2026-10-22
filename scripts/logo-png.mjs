@@ -1,17 +1,14 @@
 // Writes the logo as transparent rasters: extension icons, website ICO and touch icon, docs/logo.png (docs/BRAND.md).
 import { mkdirSync, writeFileSync } from "node:fs";
 import { crc32, deflateSync } from "node:zlib";
-import { extrusion, face, palette } from "./logo.mjs";
+import { bars } from "./logo.mjs";
 
 const SIZES = [16, 32, 48, 128];
 const LOGO_SIZE = 512;
 const SAMPLES = 8;
 
 const rgb = (hex) => [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
-const layers = [
-  { color: rgb(palette.yellow), polygons: [face] },
-  { color: rgb(palette.orange), polygons: extrusion },
-];
+const layers = bars.map(({ color, polygon }) => ({ color: rgb(color), polygon }));
 
 const inside = (polygon, x, y) => {
   let hit = false;
@@ -22,11 +19,9 @@ const inside = (polygon, x, y) => {
   }
   return hit;
 };
-// The topmost layer wins: the face covers the extrusion.
-const colorAt = (x, y) =>
-  layers.find((layer) => layer.polygons.some((polygon) => inside(polygon, x, y)))?.color;
+const colorAt = (x, y) => layers.find(({ polygon }) => inside(polygon, x, y))?.color;
 
-const points = [face, ...extrusion].flat();
+const points = bars.flatMap(({ polygon }) => polygon);
 const range = (values) => [Math.min(...values), Math.max(...values)];
 const [xs, ys] = [range(points.map(([x]) => x)), range(points.map(([, y]) => y))];
 // Center each axis on its own midpoint; the longer axis sets the scale.
