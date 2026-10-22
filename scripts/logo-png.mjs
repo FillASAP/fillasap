@@ -98,8 +98,8 @@ function ico(sizes) {
   return Buffer.concat([header, ...images]);
 }
 
-// iOS browsers ignore SVG favicons and request these two instead.
-const site = new URL("../apps/website/public/", import.meta.url);
+// iOS browsers ignore SVG favicons, so the website also links these two.
+const site = new URL("../apps/website/icons/", import.meta.url);
 writeFileSync(new URL("favicon.ico", site), ico([16, 32, 48]));
 writeFileSync(new URL("apple-touch-icon.png", site), png(180, 0.12));
 

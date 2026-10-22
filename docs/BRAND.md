@@ -6,15 +6,15 @@ The logo, the palette, and how the website and the extension popup use them.
 
 The logo is an italic **F** with a solid extrusion. `scripts/logo.mjs` holds its geometry and colors, and `vp run logo` regenerates every file drawn from it; edit the scripts, never the outputs:
 
-| File                                       | Script                 | Background                       |
-| ------------------------------------------ | ---------------------- | -------------------------------- |
-| `apps/website/public/favicon.svg`          | `scripts/favicon.mjs`  | Transparent                      |
-| `apps/extension/public/icon/<size>.png`    | `scripts/logo-png.mjs` | Transparent; 16, 32, 48, 128 px  |
-| `apps/website/public/favicon.ico`          | `scripts/logo-png.mjs` | Transparent; 16, 32, 48 px       |
-| `apps/website/public/apple-touch-icon.png` | `scripts/logo-png.mjs` | Transparent; 180 px              |
-| `docs/logo.png`                            | `scripts/logo-png.mjs` | Transparent; 512 px, for avatars |
+| File                                      | Script                 | Background                       |
+| ----------------------------------------- | ---------------------- | -------------------------------- |
+| `apps/website/icons/favicon.svg`          | `scripts/favicon.mjs`  | Transparent                      |
+| `apps/extension/public/icon/<size>.png`   | `scripts/logo-png.mjs` | Transparent; 16, 32, 48, 128 px  |
+| `apps/website/icons/favicon.ico`          | `scripts/logo-png.mjs` | Transparent; 16, 32, 48 px       |
+| `apps/website/icons/apple-touch-icon.png` | `scripts/logo-png.mjs` | Transparent; 180 px              |
+| `docs/logo.png`                           | `scripts/logo-png.mjs` | Transparent; 512 px, for avatars |
 
-No file has a tile: yellow and orange read on both light and dark backgrounds, so one file serves both themes. The extension icons are PNG because Chrome rejects SVG manifest icons. iOS browsers ignore SVG favicons and request `/favicon.ico` and `/apple-touch-icon.png`, so the website ships both; `index.html` lists the ICO before the SVG, with `sizes="32x32"`, so desktop browsers still pick the SVG. iOS fills the touch icon's transparency with black. `docs/logo.png` is the avatar for the GitHub organization and X; it has a wider margin so a circular crop keeps the letter's corners. The script rasterizes the polygons itself (8 × 8 samples per pixel), so it needs no browser or image library. WXT finds `public/icon/<size>.png` and lists them in the manifest; `vp run test:extension-manifest` fails if a production build ships without them.
+No file has a tile: yellow and orange read on both light and dark backgrounds, so one file serves both themes. The extension icons are PNG because Chrome rejects SVG manifest icons. iOS browsers ignore SVG favicons, so the website also links the ICO and the touch icon; `index.html` lists the ICO before the SVG, with `sizes="32x32"`, so desktop browsers still pick the SVG. iOS fills the touch icon's transparency with black. The website icons live outside `public/` so the build gives them content-hashed names; browsers cache favicons for weeks, and only a new name makes them fetch a changed logo. `docs/logo.png` is the avatar for the GitHub organization and X; it has a wider margin so a circular crop keeps the letter's corners. The script rasterizes the polygons itself (8 × 8 samples per pixel), so it needs no browser or image library. WXT finds `public/icon/<size>.png` and lists them in the manifest; `vp run test:extension-manifest` fails if a production build ships without them.
 
 - **Letter.** An upright F (top bar, middle bar, stem) slanted 20° to the right. The stem ends in a point toward the bottom left, which reads as speed.
 - **Depth.** The letter is extruded 2.2 units (of a 32-unit box) toward the bottom right: one shifted copy plus a quad per edge. No outline.

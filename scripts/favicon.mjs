@@ -1,4 +1,4 @@
-// Writes apps/website/public/favicon.svg: the logo on a transparent background (docs/BRAND.md).
+// Writes apps/website/icons/favicon.svg: the logo on a transparent background (docs/BRAND.md).
 import { writeFileSync } from "node:fs";
 import { extrusion, face, palette } from "./logo.mjs";
 
@@ -19,4 +19,4 @@ const svg =
   `<path fill="${palette.orange}" d="${extrusion.map(path).join("")}"/>` +
   `<path fill="${palette.yellow}" d="${path(face)}"/></svg>\n`;
 
-writeFileSync(new URL("../apps/website/public/favicon.svg", import.meta.url), svg);
+writeFileSync(new URL("../apps/website/icons/favicon.svg", import.meta.url), svg);
